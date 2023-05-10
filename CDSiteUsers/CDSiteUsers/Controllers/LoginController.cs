@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.Serialization;
 using System.Security.Claims;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace CDSiteUsers.Controllers
 {
@@ -28,7 +30,7 @@ namespace CDSiteUsers.Controllers
 
             var token = Generate(user);
 
-            return Ok(token);
+            return Ok($"Id: { user.Id } Token:{ token }");
         }
 
         private UserModel? Authenticate(UserLogin userLogin)
@@ -46,6 +48,7 @@ namespace CDSiteUsers.Controllers
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
 
             var claims = new[]
             {

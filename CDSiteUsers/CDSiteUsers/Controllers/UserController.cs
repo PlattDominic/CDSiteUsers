@@ -1,4 +1,5 @@
-﻿using CDSiteUsers.Models;
+﻿using CDSiteUsers.Data;
+using CDSiteUsers.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,10 @@ namespace CDSiteUsers.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly StoreAPIDbContext _dbContext;
+
+        public UserController(StoreAPIDbContext dbContext) => _dbContext = dbContext;
+
         [HttpGet]
         public IActionResult Public()
         {
@@ -21,11 +26,12 @@ namespace CDSiteUsers.Controllers
         public IActionResult SellerEndpoint()
         {
             var currentUser = GetCurrentUser();
+            var userItems = GetUserItems(currentUser);
 
-            return Ok($"Welcome to your seller portal, {currentUser.GivenName}");
+            return Ok($"Welcome to your seller portal, {currentUser?.GivenName}. First Item: {userItems?[0] }");
         }
 
-        private UserModel GetCurrentUser()
+        private UserModel? GetCurrentUser()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
             if (identity == null)
@@ -41,6 +47,13 @@ namespace CDSiteUsers.Controllers
                 Surname = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Surname).Value,
                 Role = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role).Value,
             };
+        }
+
+        private List<CDModel> GetUserItems(UserModel user)
+        {
+            var items = _dbContext.CDs.Where(x => x.SellerUsername == user.Id);
+
+            return items.ToList();
         }
     }
 }

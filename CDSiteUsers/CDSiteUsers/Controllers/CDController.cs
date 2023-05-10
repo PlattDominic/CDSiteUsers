@@ -36,8 +36,9 @@ namespace CDSiteUsers.Controllers
             var CD = new CDModel
             {
                 Id = Guid.NewGuid(),
+                SellerUsername = addCDForm.SellerUsername,
                 Title = addCDForm.Title,
-                Author = addCDForm.Author,
+                Artist = addCDForm.Artist,
                 Tracks = addCDForm.Tracks,
                 Duration = addCDForm.Duration
             };
@@ -58,7 +59,7 @@ namespace CDSiteUsers.Controllers
                 return NotFound();
 
             CD.Title = updateCDForm.Title;
-            CD.Author = updateCDForm.Author;
+            CD.Artist = updateCDForm.Artist;
             CD.Tracks = updateCDForm.Tracks;
             CD.Duration = updateCDForm.Duration;
 
