@@ -1,5 +1,7 @@
 ﻿using CDSiteUsers.Data;
 using CDSiteUsers.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,9 +30,20 @@ namespace CDSiteUsers.Controllers
             var currentUser = GetCurrentUser();
             var userItems = GetUserItems(currentUser);
 
-            return Ok($"Welcome to your seller portal, {currentUser?.GivenName}. First Item: {userItems?[0] }");
+            return Ok($"Welcome to your seller portal, {currentUser?.GivenName}. First Item: {userItems?[0].Title }");
         }
 
+        [HttpGet("mystore/items")]
+        [Authorize(Roles = "seller")]
+        public IActionResult GetUserCDs()
+        {
+            var currentUser = GetCurrentUser();
+
+            var userItems = GetUserItems(currentUser);
+
+            return Ok(userItems);
+        }
+        
         private UserModel? GetCurrentUser()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
@@ -51,7 +64,7 @@ namespace CDSiteUsers.Controllers
 
         private List<CDModel> GetUserItems(UserModel user)
         {
-            var items = _dbContext.CDs.Where(x => x.SellerUsername == user.Id);
+            var items = _dbContext.CDs.Where(x => x.SellerUsername == user.Username);
 
             return items.ToList();
         }

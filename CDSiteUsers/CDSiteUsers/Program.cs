@@ -26,7 +26,8 @@ builder.Services.AddMvc();
 builder.Services.AddControllers(); 
 builder.Services.AddRazorPages();
 
-builder.Services.AddDbContext<StoreAPIDbContext>(options => options.UseInMemoryDatabase("CDStoreDb"));
+//builder.Services.AddDbContext<StoreAPIDbContext>(options => options.UseInMemoryDatabase("CDStoreDb"));
+builder.Services.AddDbContext<StoreAPIDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("CDSiteConnectionString")));
 
 
 var app = builder.Build();

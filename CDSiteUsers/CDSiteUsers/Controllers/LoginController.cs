@@ -24,12 +24,12 @@ namespace CDSiteUsers.Controllers
         public IActionResult Login(UserLogin userLogin)
         {
             var user = Authenticate(userLogin);
-
+            
             if (user == null)
                 return NotFound("User was not found");
 
             var token = Generate(user);
-
+            
             return Ok($"Id: { user.Id } Token:{ token }");
         }
 
